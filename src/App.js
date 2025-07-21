@@ -44,6 +44,8 @@ export default function App() {
 
   // Referencia al contenedor de mensajes para hacer scroll automático
   const messagesEndRef = useRef(null);
+  // Referencia al campo de entrada para mantener el foco
+  const inputRef = useRef(null);
 
   // URL del Webhook de n8n. ¡DEBES REEMPLAZAR ESTA URL!
   const N8N_WEBHOOK_URL = 'https://verticedigital.app.n8n.cloud/webhook/cbff5ca3-b53c-413a-afa5-45d96a28103c';
@@ -57,6 +59,13 @@ export default function App() {
   useEffect(() => {
     scrollToBottom();
   }, [messages, isLoading]);
+
+  // useEffect para mantener el foco en el campo de entrada después de cada actualización
+  useEffect(() => {
+    if (!isLoading) {
+      inputRef.current?.focus();
+    }
+  }, [isLoading]);
 
   // Función para manejar el envío de mensajes
   const handleSendMessage = async (e) => {
@@ -155,6 +164,7 @@ export default function App() {
             <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-200 bg-white rounded-b-2xl">
               <div className="flex items-center bg-gray-100 rounded-full px-2">
                 <input
+                  ref={inputRef} // Añadimos la referencia aquí
                   type="text"
                   value={userInput}
                   onChange={(e) => setUserInput(e.target.value)}
