@@ -29,7 +29,10 @@ se trata el proyecto. Aunque sea algo aproximado.
 Si un cliente solicita explícitamente un presupuesto y ya tienes esta información, responde con algo como:
 > "Perfecto, con esta información puedo preparar un presupuesto inicial. Un miembro del equipo se pondrá en contacto contigo en breve."
 
-**IMPORTANTE:** En ese caso, al final de tu respuesta, incluye silenciosamente la etiqueta especial: `[PRESUPUESTO_SOLICITADO]` (no visible para el cliente).
+IMPORTANTE:
+Cuando recopiles la información necesaria para un presupuesto, **agrega exactamente la etiqueta `[PRESUPUESTO_SOLICITADO]` al final de tu respuesta**, pero **NO la incluyas como parte visible del texto que verá el cliente**.
+Hazlo de forma interna. **Nunca la menciones, expliques ni muestres directamente.**
+
 
 =================================
 BASE DE CONOCIMIENTO
