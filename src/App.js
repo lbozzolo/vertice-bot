@@ -163,14 +163,20 @@ export default function App() {
             {/* Área de Input */}
             <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-200 bg-white rounded-b-2xl">
               <div className="flex items-center bg-gray-100 rounded-full px-2">
-                <input
+                <textarea
                   ref={inputRef} // Añadimos la referencia aquí
-                  type="text"
                   value={userInput}
                   onChange={(e) => setUserInput(e.target.value)}
                   placeholder="Escribe tu mensaje..."
-                  className="flex-1 bg-transparent border-none focus:ring-0 p-3 text-gray-800 placeholder-gray-500"
+                  className="flex-1 bg-transparent border-none focus:ring-0 p-3 text-gray-800 placeholder-gray-500 resize-none rounded-full focus:outline-none"
                   disabled={isLoading}
+                  rows={2} // Ajusta el número de filas según sea necesario
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault(); // Evita el salto de línea
+                      handleSendMessage(e); // Envía el mensaje
+                    }
+                  }}
                 />
                 <button type="submit" disabled={isLoading || !userInput.trim()} className="p-2 rounded-full text-blue-600 hover:bg-blue-100 disabled:text-gray-400 disabled:hover:bg-transparent transition-colors">
                   <SendIcon />
