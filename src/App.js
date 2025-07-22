@@ -42,6 +42,9 @@ export default function App() {
   // Estado para mostrar un indicador de "escribiendo..." mientras se espera la respuesta
   const [isLoading, setIsLoading] = useState(false);
 
+  // Estado para almacenar el ID de la conversación
+  const [conversationId, setConversationId] = useState('');
+
   // Referencia al contenedor de mensajes para hacer scroll automático
   const messagesEndRef = useRef(null);
   // Referencia al campo de entrada para mantener el foco
@@ -67,11 +70,16 @@ export default function App() {
     }
   }, [isLoading]);
 
+  // useEffect para generar un ID único para la conversación al cargar el chat
+  useEffect(() => {
+    setConversationId(`chat_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+  }, []); // Solo se ejecuta una vez al cargar el componente
+
   // Función para manejar el envío de mensajes
   const handleSendMessage = async (e) => {
     // Previene el comportamiento por defecto del formulario (recargar la página)
     e.preventDefault();
-    
+
     // Si el input está vacío o se está esperando una respuesta, no hace nada
     if (!userInput.trim() || isLoading) return;
 
@@ -88,8 +96,12 @@ export default function App() {
         headers: {
           'Content-Type': 'application/json',
         },
-        // Es importante enviar el mensaje en un formato que n8n pueda leer fácilmente
-        body: JSON.stringify({ message: userInput, history: messages }),
+        // Añadimos el conversationId al cuerpo de la petición
+        body: JSON.stringify({
+          message: userInput,
+          history: messages,
+          conversationId: conversationId // <-- LÍNEA NUEVA
+        }),
       });
 
       if (!response.ok) {
@@ -97,20 +109,17 @@ export default function App() {
       }
 
       const data = await response.json();
-      
+
       // 3. Añade la respuesta del bot (recibida de n8n) al historial
-      // n8n debe devolver un JSON con una propiedad "reply", por ejemplo: { "reply": "Hola desde el bot" }
       const botMessage = { sender: 'bot', text: data.reply || "No he podido procesar tu solicitud." };
       setMessages(prevMessages => [...prevMessages, botMessage]);
 
     } catch (error) {
-      // Si hay un error en la comunicación, muestra un mensaje de error en el chat
       console.error("Error al conectar con el webhook:", error);
       const errorMessage = { sender: 'bot', text: 'Lo siento, estoy teniendo problemas para conectarme. Por favor, inténtalo de nuevo más tarde.' };
       setMessages(prevMessages => [...prevMessages, errorMessage]);
     } finally {
-      // 4. Desactiva el indicador de carga
-      setIsLoading(false);
+      setIsLoading(false); // Desactiva el indicador de carga
     }
   };
 
